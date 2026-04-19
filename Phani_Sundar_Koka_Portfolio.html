@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phani Sundar Koka — Controls & Automation Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   ROOT & RESET
+══════════════════════════════════════════════ */
+:root {
+  --bg:          #050212;
+  --bg2:         #0d0624;
+  --indigo:      #6366f1;
+  --indigo-d:    #4338ca;
+  --pink:        #ec4899;
+  --cyan:        #06b6d4;
+  --amber:       #f59e0b;
+  --text:        #e2e8f0;
+  --muted:       #94a3b8;
+  --border:      rgba(255,255,255,0.08);
+  --card:        rgba(255,255,255,0.03);
+  --card-h:      rgba(255,255,255,0.06);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,var(--cyan),var(--indigo));
+  border-radius:3px;
+}
+
+/* ── Noise overlay ── */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:0.025;
+  pointer-events:none;
+  z-index:9998;
+}
+
+/* ══════════════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════════════ */
+#loader{
+  position:fixed;inset:0;
+  background:var(--bg);
+  z-index:99999;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:opacity .8s ease, visibility .8s ease;
+}
+#loader.fade-out{opacity:0;visibility:hidden;pointer-events:none}
+
+.loader-initials{
+  font-family:'Syne',sans-serif;
+  font-size:5.5rem;font-weight:800;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--indigo) 50%,var(--pink) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:.15em;
+  animation:loaderPulse 1.4s ease-in-out infinite;
+}
+@keyframes loaderPulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.06);filter:brightness(1.3)}}
+
+.loader-bar-wrap{
+  width:220px;height:3px;
+  background:rgba(255,255,255,0.08);
+  border-radius:2px;margin-top:2.2rem;overflow:hidden;
+}
+.loader-bar{
+  height:100%;width:0%;border-radius:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--indigo),var(--pink),var(--amber));
+  background-size:300%;
+  animation:loaderFill 2s ease forwards, loaderShimmer 1s linear infinite;
+}
+@keyframes loaderFill{0%{width:0%}100%{width:100%}}
+@keyframes loaderShimmer{0%{background-position:0%}100%{background-position:300%}}
+.loader-text{
+  margin-top:1.1rem;font-size:.72rem;letter-spacing:.25em;
+  text-transform:uppercase;color:var(--muted);
+}
+
+/* ══════════════════════════════════════════════
+   CUSTOM CURSOR
+══════════════════════════════════════════════ */
+#cursor-dot{
+  position:fixed;width:7px;height:7px;
+  background:var(--cyan);border-radius:50%;
+  pointer-events:none;z-index:99997;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 8px var(--cyan),0 0 16px var(--cyan);
+  transition:background .3s;
+}
+#cursor-ring{
+  position:fixed;width:32px;height:32px;
+  border:1.5px solid rgba(6,182,212,.55);
+  border-radius:50%;pointer-events:none;z-index:99996;
+  transform:translate(-50%,-50%);
+  transition:width .35s ease,height .35s ease,border-color .35s ease;
+}
+#cursor-ring.big{width:50px;height:50px;border-color:rgba(236,72,153,.5)}
+
+/* ══════════════════════════════════════════════
+   PARTICLE CANVAS
+══════════════════════════════════════════════ */
+#particle-canvas{
+  position:fixed;inset:0;
+  z-index:0;pointer-events:none;
+}
+
+/* ══════════════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════════════ */
+#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:1.1rem 4rem;
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:rgba(5,2,18,.72);
+  border-bottom:1px solid var(--border);
+  transform:translateY(-110%);
+  animation:navSlideDown .8s ease 2.5s forwards;
+}
+@keyframes navSlideDown{to{transform:translateY(0)}}
+
+.nav-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;
+  background:linear-gradient(135deg,var(--cyan),var(--indigo));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  text-decoration:none;letter-spacing:-.01em;
+}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{
+  color:var(--muted);text-decoration:none;
+  font-size:.88rem;font-weight:500;
+  position:relative;transition:color .3s;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-3px;left:0;
+  width:0;height:1.5px;
+  background:linear-gradient(90deg,var(--cyan),var(--indigo));
+  transition:width .35s ease;
+}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{width:100%}
+.nav-ham{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:none}
+
+/* ══════════════════════════════════════════════
+   SHARED SECTION STYLES
+══════════════════════════════════════════════ */
+section{position:relative;z-index:1;padding:7rem 4rem}
+.container{max-width:1180px;margin:0 auto}
+.sec-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:.7rem;
+}
+.sec-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,3.8vw,2.9rem);font-weight:800;line-height:1.15;
+  margin-bottom:.9rem;
+}
+.sec-sub{
+  color:var(--muted);font-size:1rem;line-height:1.75;
+  max-width:580px;margin-bottom:3.5rem;
+}
+
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:6rem}
+.hero-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:center;
+}
+
+/* availability tag */
+.avail-tag{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.35rem 1rem;border-radius:100px;
+  border:1px solid rgba(6,182,212,.3);
+  background:rgba(6,182,212,.07);
+  font-size:.77rem;font-weight:600;color:var(--cyan);
+  margin-bottom:1.6rem;
+}
+.avail-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--cyan);
+  animation:blink 1.6s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* hero name */
+.hero-name{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.8rem,5.5vw,4.8rem);font-weight:800;line-height:1.05;
+  margin-bottom:1.1rem;
+}
+.shimmer-name{
+  background:linear-gradient(90deg,
+    var(--text) 0%,var(--cyan) 20%,var(--indigo) 40%,
+    var(--pink) 60%,var(--amber) 80%,var(--text) 100%);
+  background-size:300%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:nameShimmer 5s linear infinite;
+}
+@keyframes nameShimmer{0%{background-position:0%}100%{background-position:300%}}
+
+.hero-sub{
+  font-size:1.05rem;color:var(--muted);line-height:1.75;
+  max-width:480px;margin-bottom:2.2rem;
+}
+.hero-ctas{display:flex;gap:.9rem;flex-wrap:wrap}
+
+.btn-primary{
+  padding:.85rem 2rem;border-radius:9px;
+  background:linear-gradient(135deg,var(--indigo),var(--pink));
+  color:#fff;font-weight:600;font-size:.9rem;
+  text-decoration:none;border:none;cursor:none;
+  box-shadow:0 0 24px rgba(99,102,241,.35);
+  transition:transform .25s ease,box-shadow .25s ease;
+  display:inline-block;
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(99,102,241,.45)}
+
+.btn-outline{
+  padding:.85rem 2rem;border-radius:9px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text);font-weight:600;font-size:.9rem;
+  text-decoration:none;cursor:none;
+  transition:all .3s ease;display:inline-block;
+}
+.btn-outline:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(6,182,212,.07)}
+
+/* hero right card */
+.hero-right{display:flex;justify-content:center;align-items:center}
+.hero-card-wrap{position:relative;width:320px;height:400px}
+
+.hero-orb{
+  position:absolute;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(99,102,241,.35) 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  filter:blur(35px);
+  animation:orbPulse 3.5s ease-in-out infinite;
+}
+@keyframes orbPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.5}50%{transform:translate(-50%,-50%) scale(1.25);opacity:.85}}
+
+.spin-ring{
+  position:absolute;border-radius:50%;border:1.5px dashed;
+  top:50%;left:50%;
+}
+.spin-ring-1{
+  width:290px;height:290px;
+  border-color:rgba(6,182,212,.35);
+  transform:translate(-50%,-50%);
+  animation:spin1 14s linear infinite;
+}
+.spin-ring-2{
+  width:220px;height:220px;
+  border-color:rgba(236,72,153,.28);
+  transform:translate(-50%,-50%);
+  animation:spin1 9s linear infinite reverse;
+}
+@keyframes spin1{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+.hero-card{
+  position:absolute;top:50%;left:50%;
+  width:210px;
+  background:rgba(13,6,36,.85);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:22px;padding:2rem 1.5rem;text-align:center;
+  box-shadow:0 28px 55px rgba(0,0,0,.55),inset 0 0 22px rgba(255,255,255,.02);
+  animation:floatRotate 7s ease-in-out infinite;
+}
+@keyframes floatRotate{
+  0%,100%{transform:translate(-50%,-50%) translateY(0) perspective(700px) rotateY(-6deg) rotateX(4deg)}
+  25%{transform:translate(-50%,-50%) translateY(-12px) perspective(700px) rotateY(6deg) rotateX(-3deg)}
+  50%{transform:translate(-50%,-50%) translateY(-18px) perspective(700px) rotateY(5deg) rotateX(5deg)}
+  75%{transform:translate(-50%,-50%) translateY(-8px) perspective(700px) rotateY(-5deg) rotateX(3deg)}
+}
+
+.card-avatar{
+  width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,var(--indigo),var(--pink));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1rem;
+  font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800;color:#fff;
+  box-shadow:0 0 22px rgba(99,102,241,.55);
+}
+.card-name{
+  font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;
+  color:var(--text);margin-bottom:.2rem;
+}
+.card-role{font-size:.72rem;color:var(--muted);margin-bottom:1.3rem}
+.card-stats{display:flex;gap:.4rem}
+.c-stat{
+  flex:1;background:rgba(255,255,255,.05);
+  border:1px solid var(--border);border-radius:9px;
+  padding:.55rem .35rem;
+}
+.c-stat-n{
+  font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;
+  color:var(--cyan);display:block;
+}
+.c-stat-l{font-size:.58rem;color:var(--muted);display:block;line-height:1.35}
+
+/* ══════════════════════════════════════════════
+   MARQUEE
+══════════════════════════════════════════════ */
+.marquee-wrap{
+  padding:1.6rem 0;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.015);overflow:hidden;
+  position:relative;z-index:1;
+}
+.marquee-track{
+  display:flex;gap:3rem;width:max-content;
+  animation:marquee 28s linear infinite;
+}
+.marquee-wrap:hover .marquee-track{animation-play-state:paused}
+.marquee-item{
+  font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.06em;
+  white-space:nowrap;display:flex;align-items:center;gap:.55rem;
+}
+.marquee-item span{color:var(--cyan);font-size:.5rem}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ══════════════════════════════════════════════
+   SKILLS
+══════════════════════════════════════════════ */
+#skills{background:linear-gradient(180deg,transparent,rgba(99,102,241,.03),transparent)}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:4.5rem}
+
+.skill-item{margin-bottom:1.7rem}
+.skill-hd{display:flex;justify-content:space-between;margin-bottom:.55rem}
+.skill-name{font-weight:500;font-size:.88rem}
+.skill-pct{font-size:.78rem;color:var(--cyan);font-weight:700}
+.skill-track{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.skill-fill{
+  height:100%;border-radius:3px;width:0;
+  transition:width 1.3s cubic-bezier(.4,0,.2,1);
+  position:relative;overflow:hidden;
+}
+.skill-fill::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
+  animation:skillShimmer 2s ease 1.4s forwards;
+}
+@keyframes skillShimmer{0%{left:-100%}100%{left:120%}}
+.sf-cyan{background:linear-gradient(90deg,var(--cyan),#0891b2)}
+.sf-pink{background:linear-gradient(90deg,var(--pink),#be185d)}
+.sf-indigo{background:linear-gradient(90deg,var(--indigo),var(--indigo-d))}
+.sf-amber{background:linear-gradient(90deg,var(--amber),#d97706)}
+.sf-teal{background:linear-gradient(90deg,#14b8a6,#0f766e)}
+
+.cloud-title{
+  font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;
+  margin-bottom:1.2rem;
+}
+.tech-cloud{display:flex;flex-wrap:wrap;gap:.55rem}
+.t-chip{
+  padding:.38rem .88rem;border-radius:100px;
+  font-size:.75rem;font-weight:500;
+  border:1px solid var(--border);background:var(--card);
+  color:var(--muted);transition:all .3s ease;cursor:default;
+}
+.t-chip:hover{
+  transform:translateY(-5px);
+  border-color:var(--cyan);color:var(--cyan);
+  background:rgba(6,182,212,.08);
+  box-shadow:0 8px 20px rgba(6,182,212,.15);
+}
+
+/* ══════════════════════════════════════════════
+   EXPERIENCE
+══════════════════════════════════════════════ */
+#experience{}
+.timeline{position:relative;padding-left:1.8rem}
+.timeline::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:2px;
+  background:linear-gradient(180deg,var(--cyan),var(--indigo),var(--pink));
+  border-radius:1px;
+}
+
+.tl-item{
+  position:relative;margin-bottom:2.8rem;padding-left:2rem;
+}
+.tl-dot{
+  position:absolute;left:-2.4rem;top:.6rem;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--cyan);border:2.5px solid var(--bg);
+  box-shadow:0 0 12px var(--cyan);
+}
+.tl-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:1.8rem;
+  backdrop-filter:blur(10px);
+  transition:all .35s ease;
+}
+.tl-card:hover{
+  background:var(--card-h);
+  border-color:rgba(99,102,241,.3);
+  box-shadow:0 12px 32px rgba(0,0,0,.35),0 0 0 1px rgba(99,102,241,.12);
+  transform:translateX(6px);
+}
+.tl-top{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:.5rem;margin-bottom:.25rem;
+}
+.tl-role{
+  font-family:'Syne',sans-serif;font-size:1.08rem;font-weight:700;
+}
+.tl-date{
+  font-size:.77rem;color:var(--cyan);font-weight:600;
+  background:rgba(6,182,212,.08);padding:.22rem .7rem;
+  border-radius:100px;border:1px solid rgba(6,182,212,.2);
+}
+.tl-co{font-size:.87rem;color:var(--muted);margin-bottom:1rem}
+.tl-co em{color:var(--indigo);font-style:normal;font-weight:600}
+.tl-ul{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.tl-ul li{
+  font-size:.86rem;color:var(--muted);line-height:1.65;
+  padding-left:1.15rem;position:relative;
+}
+.tl-ul li::before{
+  content:'▸';position:absolute;left:0;top:.18rem;
+  color:var(--cyan);font-size:.68rem;
+}
+.tl-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
+.badge{
+  padding:.22rem .65rem;border-radius:5px;
+  font-size:.7rem;font-weight:700;letter-spacing:.02em;
+}
+.b-cyan{background:rgba(6,182,212,.12);color:var(--cyan)}
+.b-pink{background:rgba(236,72,153,.12);color:var(--pink)}
+.b-indigo{background:rgba(99,102,241,.12);color:var(--indigo)}
+.b-amber{background:rgba(245,158,11,.12);color:var(--amber)}
+.b-teal{background:rgba(20,184,166,.12);color:#14b8a6}
+
+/* ══════════════════════════════════════════════
+   PROJECTS
+══════════════════════════════════════════════ */
+#projects{background:linear-gradient(180deg,transparent,rgba(236,72,153,.03),transparent)}
+.projects-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;
+}
+
+.proj-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:17px;padding:1.8rem;
+  position:relative;overflow:hidden;
+  transition:all .4s ease;cursor:default;
+}
+.proj-card::before{
+  content:'';position:absolute;top:0;left:-110%;
+  width:100%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),var(--indigo),var(--pink),transparent);
+  transition:left .55s ease;
+}
+.proj-card:hover{
+  transform:translateY(-9px);
+  background:var(--card-h);
+  border-color:rgba(99,102,241,.3);
+  box-shadow:0 22px 45px rgba(0,0,0,.45);
+}
+.proj-card:hover::before{left:110%}
+
+.proj-emoji{font-size:2.1rem;margin-bottom:1rem;display:block}
+.proj-name{
+  font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;
+  color:var(--text);margin-bottom:.3rem;line-height:1.3;
+}
+.proj-date{
+  font-size:.73rem;color:var(--amber);font-weight:600;
+  margin-bottom:.75rem;
+}
+.proj-desc{
+  font-size:.82rem;color:var(--muted);line-height:1.68;
+  margin-bottom:1.2rem;
+}
+.proj-tags{display:flex;flex-wrap:wrap;gap:.4rem}
+.p-tag{
+  padding:.2rem .6rem;border-radius:4px;font-size:.69rem;font-weight:600;
+  background:rgba(99,102,241,.1);color:var(--indigo);
+  border:1px solid rgba(99,102,241,.2);
+}
+
+/* ══════════════════════════════════════════════
+   EDUCATION
+══════════════════════════════════════════════ */
+#education{}
+.edu-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;
+  margin-bottom:2.5rem;
+}
+.edu-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:1.8rem;
+  transition:all .35s ease;
+}
+.edu-card:hover{
+  border-color:rgba(99,102,241,.3);background:var(--card-h);
+  transform:translateY(-5px);box-shadow:0 14px 32px rgba(0,0,0,.3);
+}
+.edu-badge{
+  display:inline-block;width:46px;height:46px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(236,72,153,.2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;margin-bottom:1rem;
+}
+.edu-deg{
+  font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;
+  margin-bottom:.25rem;line-height:1.3;
+}
+.edu-school{
+  font-size:.87rem;color:var(--indigo);font-weight:600;
+  margin-bottom:.2rem;
+}
+.edu-meta{font-size:.79rem;color:var(--muted);margin-bottom:.9rem}
+.edu-gpa{
+  display:inline-block;padding:.22rem .75rem;border-radius:100px;
+  background:rgba(245,158,11,.1);color:var(--amber);
+  font-size:.78rem;font-weight:700;
+  border:1px solid rgba(245,158,11,.22);
+}
+
+.cert-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:1.4rem 1.6rem;
+  display:flex;align-items:center;gap:1.4rem;
+  margin-bottom:1.2rem;transition:all .3s ease;
+}
+.cert-card:hover{
+  border-color:rgba(6,182,212,.3);transform:translateX(8px);
+  box-shadow:4px 0 20px rgba(6,182,212,.1);
+}
+.cert-icon{
+  width:46px;height:46px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(6,182,212,.2),rgba(99,102,241,.2));
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+}
+.cert-name{font-family:'Syne',sans-serif;font-size:.93rem;font-weight:700}
+.cert-org{font-size:.81rem;color:var(--muted);margin-top:.15rem}
+.cert-date{font-size:.77rem;color:var(--cyan);font-weight:600;margin-left:auto;white-space:nowrap}
+
+.lang-head{
+  font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;
+  margin-bottom:1.1rem;margin-top:1.5rem;
+}
+.lang-badges{display:flex;gap:.75rem;flex-wrap:wrap}
+.lang-badge{
+  display:flex;align-items:center;gap:.55rem;
+  padding:.6rem 1.2rem;border-radius:100px;
+  border:1px solid var(--border);background:var(--card);
+  font-size:.85rem;transition:all .3s ease;
+}
+.lang-badge:hover{border-color:var(--indigo);background:rgba(99,102,241,.08)}
+.lang-flag{font-size:1.1rem}
+.lang-name{font-weight:600;color:var(--text)}
+.lang-lvl{color:var(--muted);font-size:.78rem}
+
+/* ══════════════════════════════════════════════
+   CONTACT
+══════════════════════════════════════════════ */
+#contact{}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+
+.c-items{display:flex;flex-direction:column;gap:1rem}
+.c-item{
+  display:flex;align-items:center;gap:1.1rem;
+  padding:1rem 1.4rem;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;
+  transition:all .3s ease;cursor:default;text-decoration:none;color:inherit;
+}
+.c-item:hover{
+  transform:translateX(9px);
+  border-color:rgba(6,182,212,.32);background:var(--card-h);
+  box-shadow:5px 0 22px rgba(6,182,212,.1);
+}
+.c-ico{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;flex-shrink:0;
+}
+.ci-cyan{background:rgba(6,182,212,.15)}
+.ci-pink{background:rgba(236,72,153,.15)}
+.ci-indigo{background:rgba(99,102,241,.15)}
+.ci-amber{background:rgba(245,158,11,.15)}
+.c-lbl{font-size:.73rem;color:var(--muted)}
+.c-val{font-size:.9rem;font-weight:500;color:var(--text)}
+
+.contact-right{display:flex;justify-content:center;align-items:center}
+.contact-avatar-wrap{
+  position:relative;width:210px;height:210px;
+  display:flex;align-items:center;justify-content:center;
+}
+.ripple-ring{
+  position:absolute;border-radius:50%;
+  border:1px solid rgba(6,182,212,.38);
+  animation:rippleOut 3s ease-out infinite;
+}
+.r1{width:90px;height:90px;animation-delay:0s}
+.r2{width:145px;height:145px;animation-delay:1s}
+.r3{width:205px;height:205px;animation-delay:2s}
+@keyframes rippleOut{
+  0%{transform:scale(.8);opacity:.85}
+  100%{transform:scale(1.3);opacity:0}
+}
+.contact-avatar{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,var(--indigo),var(--pink));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:#fff;
+  box-shadow:0 0 32px rgba(99,102,241,.45);
+  position:relative;z-index:1;
+  animation:avatarGlow 2.2s ease-in-out infinite;
+}
+@keyframes avatarGlow{
+  0%,100%{box-shadow:0 0 22px rgba(99,102,241,.45)}
+  50%{box-shadow:0 0 45px rgba(99,102,241,.7),0 0 70px rgba(236,72,153,.3)}
+}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+footer{
+  text-align:center;padding:2.8rem 2rem;
+  border-top:1px solid var(--border);
+  color:var(--muted);font-size:.83rem;
+  position:relative;z-index:1;
+}
+footer a{color:var(--cyan);text-decoration:none}
+footer span{color:var(--pink)}
+
+/* ══════════════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════════════ */
+.reveal{opacity:0;transition:opacity .8s ease,transform .8s ease}
+.rev-up{transform:translateY(45px)}
+.rev-left{transform:translateX(-45px)}
+.rev-right{transform:translateX(45px)}
+.reveal.visible{opacity:1;transform:translate(0)}
+.delay-1{transition-delay:.1s}
+.delay-2{transition-delay:.2s}
+.delay-3{transition-delay:.3s}
+.delay-4{transition-delay:.4s}
+.delay-5{transition-delay:.5s}
+.delay-6{transition-delay:.6s}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media(max-width:1024px){
+  .projects-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  section{padding:4.5rem 1.5rem}
+  #navbar{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  .nav-ham{display:block}
+  .hero-grid{grid-template-columns:1fr;gap:2.5rem}
+  .hero-right{order:-1}
+  .hero-card-wrap{width:240px;height:280px}
+  .skills-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .projects-grid{grid-template-columns:1fr}
+  .edu-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ LOADER -->
+<div id="loader">
+  <div class="loader-initials">PSK</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-text">Initializing Portfolio</div>
+</div>
+
+<!-- ══════════════════════════════════════ CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- ══════════════════════════════════════ CANVAS -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ══════════════════════════════════════ NAVBAR -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Phani Sundar Koka</a>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-ham" id="navHam">&#9776;</button>
+</nav>
+
+<!-- ══════════════════════════════════════ HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <!-- LEFT -->
+      <div class="hero-left reveal rev-left">
+        <div class="avail-tag"><span class="avail-dot"></span>Available for Full-Time Roles</div>
+        <h1 class="hero-name">
+          <span class="shimmer-name">Phani Sundar</span><br>Koka
+        </h1>
+        <p class="hero-sub">Controls &amp; Automation Engineer with 2+ years of hands-on PLC programming, SCADA/HMI development, and multi-axis motion control across Allen-Bradley and Siemens platforms. MS Electrical Engineering — Missouri S&amp;T.</p>
+        <div class="hero-ctas">
+          <a href="#projects" class="btn-primary">View Projects</a>
+          <a href="#contact" class="btn-outline">Get In Touch</a>
+        </div>
+      </div>
+      <!-- RIGHT — 3D Floating Card -->
+      <div class="hero-right reveal rev-right">
+        <div class="hero-card-wrap">
+          <div class="hero-orb"></div>
+          <div class="spin-ring spin-ring-1"></div>
+          <div class="spin-ring spin-ring-2"></div>
+          <div class="hero-card">
+            <div class="card-avatar">PSK</div>
+            <div class="card-name">Phani Sundar Koka</div>
+            <div class="card-role">Controls &amp; Automation Engineer</div>
+            <div class="card-stats">
+              <div class="c-stat"><span class="c-stat-n">2+</span><span class="c-stat-l">Years Exp.</span></div>
+              <div class="c-stat"><span class="c-stat-n">8+</span><span class="c-stat-l">Systems Built</span></div>
+              <div class="c-stat"><span class="c-stat-n">3.5</span><span class="c-stat-l">MS GPA</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack">
+    <span class="marquee-item"><span>◆</span>Tata Consulting Engineers</span>
+    <span class="marquee-item"><span>◆</span>Missouri S&amp;T</span>
+    <span class="marquee-item"><span>◆</span>Dr. Narla Tata Rao Power Station</span>
+    <span class="marquee-item"><span>◆</span>Allen-Bradley</span>
+    <span class="marquee-item"><span>◆</span>Siemens</span>
+    <span class="marquee-item"><span>◆</span>Beckhoff</span>
+    <span class="marquee-item"><span>◆</span>Studio 5000</span>
+    <span class="marquee-item"><span>◆</span>TIA Portal</span>
+    <span class="marquee-item"><span>◆</span>FactoryTalk</span>
+    <span class="marquee-item"><span>◆</span>Ignition SCADA</span>
+    <span class="marquee-item"><span>◆</span>EtherNet/IP</span>
+    <span class="marquee-item"><span>◆</span>PROFINET</span>
+    <span class="marquee-item"><span>◆</span>PackML</span>
+    <!-- duplicate for seamless loop -->
+    <span class="marquee-item"><span>◆</span>Tata Consulting Engineers</span>
+    <span class="marquee-item"><span>◆</span>Missouri S&amp;T</span>
+    <span class="marquee-item"><span>◆</span>Dr. Narla Tata Rao Power Station</span>
+    <span class="marquee-item"><span>◆</span>Allen-Bradley</span>
+    <span class="marquee-item"><span>◆</span>Siemens</span>
+    <span class="marquee-item"><span>◆</span>Beckhoff</span>
+    <span class="marquee-item"><span>◆</span>Studio 5000</span>
+    <span class="marquee-item"><span>◆</span>TIA Portal</span>
+    <span class="marquee-item"><span>◆</span>FactoryTalk</span>
+    <span class="marquee-item"><span>◆</span>Ignition SCADA</span>
+    <span class="marquee-item"><span>◆</span>EtherNet/IP</span>
+    <span class="marquee-item"><span>◆</span>PROFINET</span>
+    <span class="marquee-item"><span>◆</span>PackML</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="reveal rev-up">
+      <div class="sec-label">Technical Expertise</div>
+      <h2 class="sec-title">Skills &amp; Technologies</h2>
+      <p class="sec-sub">Proficient across the full industrial automation stack — from PLC programming and servo tuning to HMI design and safety integration.</p>
+    </div>
+    <div class="skills-grid">
+      <!-- SKILL BARS -->
+      <div>
+        <div class="skill-item reveal rev-left delay-1">
+          <div class="skill-hd"><span class="skill-name">Allen-Bradley Studio 5000 / PLCs</span><span class="skill-pct">95%</span></div>
+          <div class="skill-track"><div class="skill-fill sf-cyan" data-pct="95"></div></div>
+        </div>
+        <div class="skill-item reveal rev-left delay-2">
+          <div class="skill-hd"><span class="skill-name">Siemens TIA Portal / S7 PLCs</span><span class="skill-pct">88%</span></div>
+          <div class="skill-track"><div class="skill-fill sf-indigo" data-pct="88"></div></div>
+        </div>
+        <div class="skill-item reveal rev-left delay-3">
+          <div class="skill-hd"><span class="skill-name">SCADA / HMI Development</span><span class="skill-pct">85%</span></div>
+          <div class="skill-track"><div class="skill-fill sf-pink" data-pct="85"></div></div>
+        </div>
+        <div class="skill-item reveal rev-left delay-4">
+          <div class="skill-hd"><span class="skill-name">Multi-Axis Motion Control</span><span class="skill-pct">83%</span></div>
+          <div class="skill-track"><div class="skill-fill sf-cyan" data-pct="83"></div></div>
+        </div>
+        <div class="skill-item reveal rev-left delay-5">
+          <div class="skill-hd"><span class="skill-name">Industrial Networking (EIP / PROFINET)</span><span class="skill-pct">80%</span></div>
+          <div class="skill-track"><div class="skill-fill sf-amber" data-pct="80"></div></div>
+        </div>
+        <div class="skill-item reveal rev-left delay-6">
+          <div class="skill-hd"><span class="skill-name">Safety Systems (SIS / ISO 13849)</span><span class="skill-pct">78%</span></div>
+          <div class="skill-track"><div class="skill-fill sf-teal" data-pct="78"></div></div>
+        </div>
+        <div class="skill-item reveal rev-left">
+          <div class="skill-hd"><span class="skill-name">MATLAB / Simulink</span><span class="skill-pct">75%</span></div>
+          <div class="skill-track"><div class="skill-fill sf-pink" data-pct="75"></div></div>
+        </div>
+        <div class="skill-item reveal rev-left">
+          <div class="skill-hd"><span class="skill-name">AutoCAD / Electrical Schematics</span><span class="skill-pct">70%</span></div>
+          <div class="skill-track"><div class="skill-fill sf-indigo" data-pct="70"></div></div>
+        </div>
+      </div>
+      <!-- TECH CLOUD -->
+      <div class="reveal rev-right">
+        <div class="cloud-title">All Technologies</div>
+        <div class="tech-cloud">
+          <span class="t-chip">CompactLogix</span><span class="t-chip">ControlLogix</span>
+          <span class="t-chip">Siemens S7-1200</span><span class="t-chip">Siemens S7-1500</span>
+          <span class="t-chip">Beckhoff CX5140</span><span class="t-chip">ABB AC500</span>
+          <span class="t-chip">Ladder Logic</span><span class="t-chip">Structured Text</span>
+          <span class="t-chip">FBD</span><span class="t-chip">PackML</span>
+          <span class="t-chip">Kinetix 350</span><span class="t-chip">Kinetix 5500</span>
+          <span class="t-chip">SINAMICS S120</span><span class="t-chip">VFDs</span>
+          <span class="t-chip">PID Tuning</span><span class="t-chip">S-Profile Motion</span>
+          <span class="t-chip">Virtual Axis Sync</span><span class="t-chip">CIP Motion</span>
+          <span class="t-chip">FactoryTalk View SE</span><span class="t-chip">FactoryTalk View ME</span>
+          <span class="t-chip">FactoryTalk Optix</span><span class="t-chip">FactoryTalk Historian</span>
+          <span class="t-chip">WinCC</span><span class="t-chip">Ignition SCADA</span>
+          <span class="t-chip">EtherNet/IP</span><span class="t-chip">PROFINET</span>
+          <span class="t-chip">PROFIBUS</span><span class="t-chip">Modbus TCP/RTU</span>
+          <span class="t-chip">ControlNet</span><span class="t-chip">DeviceNet</span>
+          <span class="t-chip">CIP Safety</span><span class="t-chip">Safe Torque Off</span>
+          <span class="t-chip">Light Curtains</span><span class="t-chip">GuardLogix</span>
+          <span class="t-chip">MATLAB</span><span class="t-chip">Simulink</span>
+          <span class="t-chip">AutoCAD</span><span class="t-chip">P&amp;ID</span>
+          <span class="t-chip">TwinCAT 3</span><span class="t-chip">EtherCAT</span>
+          <span class="t-chip">AOI / UDT</span><span class="t-chip">MSG Blocks</span>
+          <span class="t-chip">FAT / SAT</span><span class="t-chip">CMMS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="reveal rev-up">
+      <div class="sec-label">Career History</div>
+      <h2 class="sec-title">Professional Experience</h2>
+      <p class="sec-sub">Hands-on experience across manufacturing, power generation, and material handling environments — from I/O mapping through site commissioning.</p>
+    </div>
+    <div class="timeline">
+
+      <!-- TCE -->
+      <div class="tl-item reveal rev-left">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-top">
+            <div class="tl-role">Automation &amp; Maintenance Engineer</div>
+            <div class="tl-date">Oct 2022 – Dec 2023</div>
+          </div>
+          <div class="tl-co"><em>Tata Consulting Engineers (TCE)</em> &nbsp;·&nbsp; Full-Time</div>
+          <ul class="tl-ul">
+            <li>Developed and validated PLC logic for 8+ manufacturing and material handling systems using Allen-Bradley Studio 5000 and Siemens TIA Portal — covering sequencing, interlocks, alarms, and startup/shutdown routines, reducing equipment startup time by <strong>15%</strong>.</li>
+            <li>Executed FAT and SAT alongside project and client teams, identifying and resolving 10–15 logic discrepancies per project before site deployment, protecting go-live timelines and eliminating post-deployment rework.</li>
+            <li>Integrated conveyors, sortation systems, robotic cells, and vision systems into PLC architectures — improving defect identification speed by <strong>20%</strong> and production flow reliability.</li>
+            <li>Designed FactoryTalk View SE HMI screens with real-time status, alarms, and manual controls; iterated layouts based on operator feedback, cutting floor-level escalation calls by <strong>30%</strong>.</li>
+            <li>Diagnosed and resolved communication faults across EtherNet/IP, ControlNet, DeviceNet, and Modbus TCP/IP networks, restoring stable communication and reducing network-related downtime.</li>
+            <li>Led PLC retrofit projects replacing legacy relay panels with Allen-Bradley and Siemens hardware — completed full functional testing with zero post-commissioning failures.</li>
+            <li>Leveraged FactoryTalk Historian to surface recurring faults and process drift, driving targeted changes in control logic and preventive maintenance schedules.</li>
+          </ul>
+          <div class="tl-badges">
+            <span class="badge b-cyan">Studio 5000</span>
+            <span class="badge b-indigo">TIA Portal</span>
+            <span class="badge b-pink">FactoryTalk View SE</span>
+            <span class="badge b-amber">FAT / SAT</span>
+            <span class="badge b-teal">EtherNet/IP</span>
+            <span class="badge b-cyan">FactoryTalk Historian</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Power Station Intern -->
+      <div class="tl-item reveal rev-left delay-2">
+        <div class="tl-dot" style="background:var(--indigo);box-shadow:0 0 12px var(--indigo)"></div>
+        <div class="tl-card">
+          <div class="tl-top">
+            <div class="tl-role">Process Control Intern</div>
+            <div class="tl-date">Feb 2020 – Nov 2020</div>
+          </div>
+          <div class="tl-co"><em>Dr. Narla Tata Rao Thermal Power Station</em> &nbsp;·&nbsp; Internship</div>
+          <ul class="tl-ul">
+            <li>Improved Siemens S7-1200 PLC-based coal handling system reliability through optimized ladder logic and standardized troubleshooting procedures for motor starters, VFDs, and frequency drives.</li>
+            <li>Monitored SCADA/HMI screens during operational shifts, reducing conveyor downtime by <strong>12%</strong>; implemented E-stop and belt-alignment safety interlocks achieving <strong>100% ISO compliance</strong>.</li>
+            <li>Maintained PROFINET, PROFIBUS, and Modbus TCP/IP communication links between PLCs, SCADA, and electrical distribution systems through routine checks and targeted fault resolution.</li>
+            <li>Verified interlock and permissive logic for conveyor systems against design documentation, identifying configuration drift and restoring compliance.</li>
+            <li>Contributed to control loop analysis using RGA and SVD methods in MATLAB and Octave to evaluate sensor placement and loop pairing, improving loop performance.</li>
+            <li>Maintained wiring diagrams, PLC logic notes, and troubleshooting references current with field changes throughout the internship.</li>
+          </ul>
+          <div class="tl-badges">
+            <span class="badge b-indigo">Siemens S7-1200</span>
+            <span class="badge b-cyan">PROFINET / PROFIBUS</span>
+            <span class="badge b-pink">SCADA/HMI</span>
+            <span class="badge b-amber">MATLAB / Octave</span>
+            <span class="badge b-teal">Safety Interlocks</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="reveal rev-up">
+      <div class="sec-label">Engineering Work</div>
+      <h2 class="sec-title">Projects</h2>
+      <p class="sec-sub">Graduate coursework and industry projects spanning delta robotics, gantry motion, powder conveying, safety systems, and multi-platform PLC control.</p>
+    </div>
+    <div class="projects-grid">
+
+      <!-- DeltaBot -->
+      <div class="proj-card reveal rev-up delay-1">
+        <span class="proj-emoji">🤖</span>
+        <div class="proj-name">3-Axis DeltaBot Position Control</div>
+        <div class="proj-date">Mar 2025</div>
+        <div class="proj-desc">7-servo Delta robot with Cartesian/kinematic coordinate systems, spiral Archimedean cam profiles, and PackML-structured Unit/Equipment architecture on a Rockwell ControlLogix 1756-L81E. Implemented MCLM coordinated linear moves, MATC time-driven cam playback, and live accel computation per-step. Tuned jerk from 100% → 50% → 10% to characterize the mechanical-stress vs. cycle-time trade-off.</div>
+        <div class="proj-tags">
+          <span class="p-tag">ControlLogix 1756-L81E</span>
+          <span class="p-tag">Kinetix 5700</span>
+          <span class="p-tag">EtherNet/IP CIP Motion</span>
+          <span class="p-tag">Studio 5000</span>
+          <span class="p-tag">PackML</span>
+          <span class="p-tag">Structured Text</span>
+        </div>
+      </div>
+
+      <!-- Gantry -->
+      <div class="proj-card reveal rev-up delay-2">
+        <span class="proj-emoji">⚙️</span>
+        <div class="proj-name">Gantry Safety &amp; Motion Control System</div>
+        <div class="proj-date">Feb 2025</div>
+        <div class="proj-desc">Two-axis industrial gantry with SIL-rated safety architecture on both Rockwell (Compact GuardLogix 5370 + Kinetix 350) and Siemens (TIA Portal V19 + STEP 7 Safety Advanced) platforms. Implemented dual-channel E-stop, light curtain, Safe Torque Off with 500 ms controlled off-delay, and ISA-TR88 PackML state machine. Achieved full ISO 13849 compliance with zero unplanned safety trips during validation.</div>
+        <div class="proj-tags">
+          <span class="p-tag">GuardLogix 5370</span>
+          <span class="p-tag">Kinetix 350</span>
+          <span class="p-tag">STEP 7 Safety V19</span>
+          <span class="p-tag">Safe Torque Off</span>
+          <span class="p-tag">ISO 13849</span>
+          <span class="p-tag">PackML</span>
+        </div>
+      </div>
+
+      <!-- Rotary Knife -->
+      <div class="proj-card reveal rev-up delay-3">
+        <span class="proj-emoji">🔪</span>
+        <div class="proj-name">PLC-Based Rotary Knife Control System</div>
+        <div class="proj-date">Mar 2025</div>
+        <div class="proj-desc">High-precision rotary knife system using Siemens S7-1500 and SINAMICS S120 drives over PROFINET motion control. Programmed in Ladder Logic and Structured Text to optimize blade synchronization and cut efficiency. Tuned servo parameters and motion profiles to minimize positional error, achieving consistent blade-to-material synchronization across variable production speeds.</div>
+        <div class="proj-tags">
+          <span class="p-tag">Siemens S7-1500</span>
+          <span class="p-tag">SINAMICS S120</span>
+          <span class="p-tag">PROFINET</span>
+          <span class="p-tag">Ladder Logic</span>
+          <span class="p-tag">Structured Text</span>
+          <span class="p-tag">Servo Tuning</span>
+        </div>
+      </div>
+
+      <!-- Truck Powder Unload -->
+      <div class="proj-card reveal rev-up delay-1">
+        <span class="proj-emoji">🏭</span>
+        <div class="proj-name">Truck Powder Ingredient Unload Station</div>
+        <div class="proj-date">Nov 2025</div>
+        <div class="proj-desc">Complete unit-level control system for pneumatic powder transfer on a CompactLogix 5069-L306ER. Designed 5 sequences (Transfer, Hold, FilterClean, Shutdown, E-Shutdown) with AOI-based device layer for 9 motorized valves, blower, and rotary airlock. Built FactoryTalk View ME HMI with P&amp;ID overview, sequence start pop-ups, and operator selection screens. Implemented MSG-based inter-processor tank interlock with a parallel Rail Powder unit.</div>
+        <div class="proj-tags">
+          <span class="p-tag">CompactLogix L306ER</span>
+          <span class="p-tag">Studio 5000</span>
+          <span class="p-tag">FactoryTalk View ME</span>
+          <span class="p-tag">AOI / UDT</span>
+          <span class="p-tag">MSG Blocks</span>
+          <span class="p-tag">PackML</span>
+        </div>
+      </div>
+
+      <!-- Simple Motion Control -->
+      <div class="proj-card reveal rev-up delay-2">
+        <span class="proj-emoji">⚡</span>
+        <div class="proj-name">Simple Motion Control — Dual Platform</div>
+        <div class="proj-date">Graduate Lab</div>
+        <div class="proj-desc">Same single-axis PackML motion application implemented on two industrial ecosystems: Rockwell 1756-L71 / Kinetix 5300 (100 mm linear move, Ethernet/IP) and Siemens S7-1500 / SINAMICS S120 (1000° rotary move, PROFINET IRT). Full autotune + manual tuning workflow with position-error / velocity-error trends. Cross-platform comparison of MAM vs. MC_MoveRelative, OTL/OTU vs. S/R coils, and S-curve vs. trapezoidal profiles.</div>
+        <div class="proj-tags">
+          <span class="p-tag">ControlLogix 1756-L71</span>
+          <span class="p-tag">Kinetix 5300</span>
+          <span class="p-tag">S7-1500</span>
+          <span class="p-tag">SINAMICS S120</span>
+          <span class="p-tag">PROFINET IRT</span>
+          <span class="p-tag">Servo Tuning</span>
+        </div>
+      </div>
+
+      <!-- Point IO -->
+      <div class="proj-card reveal rev-up delay-3">
+        <span class="proj-emoji">💡</span>
+        <div class="proj-name">Ethernet/IP Point I/O Stack-Light Sequencer</div>
+        <div class="proj-date">Graduate Lab</div>
+        <div class="proj-desc">Configured full Ethernet/IP distributed-I/O subnet in Studio 5000: 1756-L71 ControlLogix + 1756-EN2TR scanner + 1734-AENT/B Point I/O adapter (3-slot chassis) with IB8/C input and OB8/C relay output modules at 20 ms RPI. Six-rung ladder sequencer (Blue→Green→Yellow→Red) using OTL/OTU state latching, TON dwell timers, and pause/resume via seal-in Run latch with clean first-scan initialization.</div>
+        <div class="proj-tags">
+          <span class="p-tag">ControlLogix 1756-L71</span>
+          <span class="p-tag">1734-AENT Point I/O</span>
+          <span class="p-tag">EtherNet/IP</span>
+          <span class="p-tag">Studio 5000</span>
+          <span class="p-tag">Ladder Logic</span>
+        </div>
+      </div>
+
+      <!-- Beckhoff -->
+      <div class="proj-card reveal rev-up delay-2" style="grid-column:2">
+        <span class="proj-emoji">📦</span>
+        <div class="proj-name">Beckhoff Cereal Box Filler Control System</div>
+        <div class="proj-date">Graduate Lab</div>
+        <div class="proj-desc">Sequential process-control application on Beckhoff CX5140 (TwinCAT 3, IEC 61131-3 LD). Five-step cereal filling sequence: conveyor advance → 2 s dwell → fill solenoid → weight sensor confirm → 3 s settling dwell, with pause/resume (single RUN latch preserves step state) and reset-while-stopped logic. Full ADS routing, EtherCAT terminal scanning, and input forcing for online verification on bench hardware.</div>
+        <div class="proj-tags">
+          <span class="p-tag">Beckhoff CX5140</span>
+          <span class="p-tag">TwinCAT 3</span>
+          <span class="p-tag">IEC 61131-3 LD</span>
+          <span class="p-tag">EtherCAT</span>
+          <span class="p-tag">TON Sequencer</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ EDUCATION -->
+<section id="education">
+  <div class="container">
+    <div class="reveal rev-up">
+      <div class="sec-label">Academic Background</div>
+      <h2 class="sec-title">Education &amp; Certifications</h2>
+    </div>
+
+    <div class="edu-grid">
+      <div class="edu-card reveal rev-left delay-1">
+        <div class="edu-badge">🎓</div>
+        <div class="edu-deg">Master of Science — Electrical Engineering</div>
+        <div class="edu-school">Missouri University of Science and Technology</div>
+        <div class="edu-meta">Rolla, MO &nbsp;·&nbsp; Jan 2024 – Dec 2025</div>
+        <span class="edu-gpa">GPA: 3.5 / 4.0</span>
+      </div>
+      <div class="edu-card reveal rev-right delay-2">
+        <div class="edu-badge">🏛️</div>
+        <div class="edu-deg">Bachelor of Science — Electrical &amp; Electronics Engineering</div>
+        <div class="edu-school">PVP Siddhartha Institute of Technology</div>
+        <div class="edu-meta">Vijayawada, India &nbsp;·&nbsp; Aug 2019 – May 2023</div>
+        <span class="edu-gpa">GPA: 3.6 / 4.0</span>
+      </div>
+    </div>
+
+    <div class="cert-card reveal rev-left delay-1">
+      <div class="cert-icon">📜</div>
+      <div>
+        <div class="cert-name">Basic Programmable Logic Controller (PLC) Course</div>
+        <div class="cert-org">Dr. Kelvin Todd Erickson · Missouri University of Science and Technology</div>
+      </div>
+      <div class="cert-date">Jul 2024</div>
+    </div>
+
+    <div class="lang-head reveal rev-up">Language Proficiency</div>
+    <div class="lang-badges reveal rev-up delay-1">
+      <div class="lang-badge"><span class="lang-flag">🇺🇸</span><span class="lang-name">English</span><span class="lang-lvl">Professional Proficiency</span></div>
+      <div class="lang-badge"><span class="lang-flag">🇮🇳</span><span class="lang-name">Telugu</span><span class="lang-lvl">Native</span></div>
+      <div class="lang-badge"><span class="lang-flag">🇮🇳</span><span class="lang-name">Hindi</span><span class="lang-lvl">Working Knowledge</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="reveal rev-up">
+      <div class="sec-label">Let's Connect</div>
+      <h2 class="sec-title">Get In Touch</h2>
+      <p class="sec-sub">Open to full-time Controls &amp; Automation Engineering opportunities. Let's build something reliable together.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="c-items">
+        <a href="mailto:phanisundarkoka@gmail.com" class="c-item reveal rev-left delay-1">
+          <div class="c-ico ci-cyan">✉️</div>
+          <div><div class="c-lbl">Email</div><div class="c-val">phanisundarkoka@gmail.com</div></div>
+        </a>
+        <a href="tel:+15735371288" class="c-item reveal rev-left delay-2">
+          <div class="c-ico ci-pink">📞</div>
+          <div><div class="c-lbl">Phone</div><div class="c-val">+1 (573) 537-1288</div></div>
+        </a>
+        <div class="c-item reveal rev-left delay-3">
+          <div class="c-ico ci-indigo">📍</div>
+          <div><div class="c-lbl">Location</div><div class="c-val">Maryville, MO</div></div>
+        </div>
+        <a href="https://linkedin.com/in/pkoka17" target="_blank" rel="noopener" class="c-item reveal rev-left delay-4">
+          <div class="c-ico ci-amber">🔗</div>
+          <div><div class="c-lbl">LinkedIn</div><div class="c-val">linkedin.com/in/pkoka17</div></div>
+        </a>
+        <div class="c-item reveal rev-left delay-5">
+          <div class="c-ico ci-teal" style="background:rgba(20,184,166,.15)">✅</div>
+          <div><div class="c-lbl">Availability</div><div class="c-val">Open to Full-Time Roles — Dec 2025</div></div>
+        </div>
+      </div>
+      <div class="contact-right reveal rev-right">
+        <div class="contact-avatar-wrap">
+          <div class="ripple-ring r1"></div>
+          <div class="ripple-ring r2"></div>
+          <div class="ripple-ring r3"></div>
+          <div class="contact-avatar">PSK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ FOOTER -->
+<footer>
+  <p>Designed &amp; built by <span>Phani Sundar Koka</span> &nbsp;·&nbsp; Controls &amp; Automation Engineer &nbsp;·&nbsp; <a href="mailto:phanisundarkoka@gmail.com">phanisundarkoka@gmail.com</a></p>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+/* ─── 1. LOADER ─────────────────────────────── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('fade-out');
+  }, 2200);
+});
+
+/* ─── 2. PARTICLE CANVAS ────────────────────── */
+(function(){
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  const COLORS = ['#06b6d4','#6366f1','#ec4899','#f59e0b','#06b6d4','#6366f1'];
+  let particles = [];
+  let W, H;
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Particle {
+    constructor(){
+      this.reset();
+    }
+    reset(){
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.vx = (Math.random() - 0.5) * 0.55;
+      this.vy = (Math.random() - 0.5) * 0.55;
+      this.r = Math.random() * 1.8 + 0.6;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.alpha = Math.random() * 0.5 + 0.3;
+    }
+    update(){
+      this.x += this.vx;
+      this.y += this.vy;
+      if(this.x < 0 || this.x > W) this.vx *= -1;
+      if(this.y < 0 || this.y > H) this.vy *= -1;
+    }
+    draw(){
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+      ctx.fillStyle = this.color;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = this.color;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  const COUNT = Math.min(100, Math.floor(W * H / 12000));
+  for(let i = 0; i < COUNT; i++) particles.push(new Particle());
+
+  function connect(){
+    const MAX = 130;
+    for(let i = 0; i < particles.length; i++){
+      for(let j = i+1; j < particles.length; j++){
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if(d < MAX){
+          const alpha = (1 - d/MAX) * 0.2;
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.strokeStyle = '#6366f1';
+          ctx.lineWidth = 0.6;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }
+  }
+
+  function loop(){
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    connect();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ─── 3. CUSTOM CURSOR ──────────────────────── */
+(function(){
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  let rx = 0, ry = 0, mx = 0, my = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+  });
+
+  function animRing(){
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button, .proj-card, .c-item, .t-chip, .edu-card, .cert-card').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('big'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('big'));
+  });
+})();
+
+/* ─── 4. SCROLL REVEAL ──────────────────────── */
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  els.forEach(el => io.observe(el));
+})();
+
+/* ─── 5. SKILL BARS ─────────────────────────── */
+(function(){
+  const fills = document.querySelectorAll('.skill-fill');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        const pct = e.target.getAttribute('data-pct');
+        e.target.style.width = pct + '%';
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  fills.forEach(f => io.observe(f));
+})();
+
+/* ─── 6. NAVBAR HIDE/SHOW ───────────────────── */
+(function(){
+  let lastY = 0;
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if(y > lastY && y > 100){
+      nav.style.transform = 'translateY(-110%)';
+    } else {
+      nav.style.transform = 'translateY(0)';
+    }
+    lastY = y;
+  });
+})();
+
+/* ─── 7. MOBILE MENU ────────────────────────── */
+(function(){
+  const ham = document.getElementById('navHam');
+  const links = document.querySelector('.nav-links');
+  if(!ham) return;
+  ham.addEventListener('click', () => {
+    const open = links.style.display === 'flex';
+    links.style.display = open ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '60px';
+    links.style.right = '1.5rem';
+    links.style.background = 'rgba(13,6,36,.95)';
+    links.style.border = '1px solid rgba(255,255,255,.08)';
+    links.style.borderRadius = '12px';
+    links.style.padding = '1rem 1.5rem';
+    links.style.gap = '1.1rem';
+  });
+  // Close on nav link click
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => { links.style.display = ''; });
+  });
+})();
+
+/* ─── 8. SMOOTH COUNTER for hero card ──────── */
+(function(){
+  // small twinkle effect on stat numbers on page load
+  const nums = document.querySelectorAll('.c-stat-n');
+  nums.forEach((n, i) => {
+    n.style.transition = `opacity .4s ease ${i * 0.2 + 0.5}s`;
+    n.style.opacity = '0';
+    setTimeout(() => { n.style.opacity = '1'; }, (i * 200) + 2600);
+  });
+})();
+</script>
+</body>
+</html>
