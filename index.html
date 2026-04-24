@@ -678,11 +678,42 @@ footer span{color:var(--pink)}
   .nav-ham{display:block}
   .hero-grid{grid-template-columns:1fr;gap:2.5rem}
   .hero-right{order:-1}
-  .hero-card-wrap{width:240px;height:280px}
+  .hero-card-wrap{width:240px;height:300px}
+  .spin-ring-1{width:220px;height:220px}
+  .spin-ring-2{width:160px;height:160px}
   .skills-grid{grid-template-columns:1fr}
   .contact-grid{grid-template-columns:1fr}
   .projects-grid{grid-template-columns:1fr}
+  /* force any card with an inline grid-column back to auto */
+  .proj-card[style*="grid-column"]{grid-column:auto!important}
   .edu-grid{grid-template-columns:1fr}
+  /* timeline date wraps cleanly */
+  .tl-top{flex-direction:column;gap:.3rem}
+  .tl-date{align-self:flex-start}
+  /* cert card stacks vertically on small screens */
+  .cert-card{flex-direction:column;align-items:flex-start;gap:.6rem}
+  .cert-date{margin-left:0;white-space:normal}
+  /* mobile menu dropdown */
+  .nav-links.mobile-open{
+    display:flex!important;flex-direction:column;
+    position:absolute;top:62px;right:1.5rem;
+    background:rgba(13,6,36,.97);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;padding:1rem 1.5rem;gap:1.1rem;
+    z-index:2000;min-width:160px;
+    box-shadow:0 12px 40px rgba(0,0,0,.55);
+  }
+}
+@media(max-width:400px){
+  .hero-card-wrap{width:200px;height:260px}
+  .spin-ring-1{width:185px;height:185px}
+  .spin-ring-2{width:135px;height:135px}
+  .hero-card{width:175px}
+}
+/* disable custom cursor on touch/mobile devices */
+@media(hover:none){
+  body{cursor:auto!important}
+  #cursor-dot,#cursor-ring{display:none!important}
 }
 </style>
 </head>
@@ -1038,7 +1069,7 @@ footer span{color:var(--pink)}
       </div>
 
       <!-- Beckhoff -->
-      <div class="proj-card reveal rev-up delay-2" style="grid-column:2">
+      <div class="proj-card reveal rev-up delay-2">
         <span class="proj-emoji">📦</span>
         <div class="proj-name">Beckhoff Cereal Box Filler Control System</div>
         <div class="proj-date">Graduate Lab</div>
@@ -1243,6 +1274,8 @@ window.addEventListener('load', () => {
 
 /* ─── 3. CUSTOM CURSOR ──────────────────────── */
 (function(){
+  // skip on touch / mobile devices — they have no hover
+  if(window.matchMedia('(hover: none)').matches) return;
   const dot  = document.getElementById('cursor-dot');
   const ring = document.getElementById('cursor-ring');
   let rx = 0, ry = 0, mx = 0, my = 0;
@@ -1311,25 +1344,21 @@ window.addEventListener('load', () => {
 
 /* ─── 7. MOBILE MENU ────────────────────────── */
 (function(){
-  const ham = document.getElementById('navHam');
+  const ham   = document.getElementById('navHam');
   const links = document.querySelector('.nav-links');
   if(!ham) return;
+  function close(){ links.classList.remove('mobile-open'); ham.innerHTML='&#9776;'; }
+  function open(){  links.classList.add('mobile-open');    ham.innerHTML='&#10005;'; }
   ham.addEventListener('click', () => {
-    const open = links.style.display === 'flex';
-    links.style.display = open ? 'none' : 'flex';
-    links.style.flexDirection = 'column';
-    links.style.position = 'absolute';
-    links.style.top = '60px';
-    links.style.right = '1.5rem';
-    links.style.background = 'rgba(13,6,36,.95)';
-    links.style.border = '1px solid rgba(255,255,255,.08)';
-    links.style.borderRadius = '12px';
-    links.style.padding = '1rem 1.5rem';
-    links.style.gap = '1.1rem';
+    links.classList.contains('mobile-open') ? close() : open();
   });
-  // Close on nav link click
+  // Close when a link is tapped
   document.querySelectorAll('.nav-links a').forEach(a => {
-    a.addEventListener('click', () => { links.style.display = ''; });
+    a.addEventListener('click', () => close());
+  });
+  // Close when tapping outside
+  document.addEventListener('click', e => {
+    if(!ham.contains(e.target) && !links.contains(e.target)) close();
   });
 })();
 
