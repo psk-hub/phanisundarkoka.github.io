@@ -887,6 +887,10 @@ footer span{color:var(--pink)}
           <span class="t-chip">TwinCAT 3</span><span class="t-chip">EtherCAT</span>
           <span class="t-chip">AOI / UDT</span><span class="t-chip">MSG Blocks</span>
           <span class="t-chip">FAT / SAT</span><span class="t-chip">CMMS</span>
+          <span class="t-chip">Motion Analyzer</span><span class="t-chip">Remote I/O</span>
+          <span class="t-chip">Alarm Management</span><span class="t-chip">Operator Interface Design</span>
+          <span class="t-chip">SQL-based Logging</span><span class="t-chip">LOTO</span>
+          <span class="t-chip">NEC</span><span class="t-chip">Preventive Maintenance</span>
         </div>
       </div>
     </div>
@@ -942,12 +946,13 @@ footer span{color:var(--pink)}
           </div>
           <div class="tl-co"><em>Dr. Narla Tata Rao Thermal Power Station</em> &nbsp;·&nbsp; Internship</div>
           <ul class="tl-ul">
-            <li>Improved Siemens S7-1200 PLC-based coal handling system reliability through optimized ladder logic and standardized troubleshooting procedures for motor starters, VFDs, and frequency drives.</li>
-            <li>Monitored SCADA/HMI screens during operational shifts, reducing conveyor downtime by <strong>12%</strong>; implemented E-stop and belt-alignment safety interlocks achieving <strong>100% ISO compliance</strong>.</li>
-            <li>Maintained PROFINET, PROFIBUS, and Modbus TCP/IP communication links between PLCs, SCADA, and electrical distribution systems through routine checks and targeted fault resolution.</li>
-            <li>Verified interlock and permissive logic for conveyor systems against design documentation, identifying configuration drift and restoring compliance.</li>
-            <li>Contributed to control loop analysis using RGA and SVD methods in MATLAB and Octave to evaluate sensor placement and loop pairing, improving loop performance.</li>
-            <li>Maintained wiring diagrams, PLC logic notes, and troubleshooting references current with field changes throughout the internship.</li>
+            <li>Optimized Siemens S7-1200 PLC ladder logic and troubleshooting procedures for coal handling systems — reduced conveyor downtime by <strong>12%</strong>.</li>
+            <li>Monitored SCADA/HMI screens during operational shifts; implemented E-stop and belt-alignment safety interlocks, achieving <strong>100% ISO compliance</strong>.</li>
+            <li>Maintained PROFINET, PROFIBUS, and Modbus TCP/IP communication links between PLCs, SCADA, and electrical distribution through routine checks and targeted fault resolution.</li>
+            <li>Implemented controlled PLC logic modifications in TIA Portal using Ladder Logic and FBD; changes passed formal review and went live, improving equipment uptime.</li>
+            <li>Verified interlock and permissive logic for conveyor and material handling systems against design documentation, identifying configuration drift and restoring compliance.</li>
+            <li>Contributed to control loop analysis using RGA and SVD methods in MATLAB and Octave — evaluated sensor placement and loop pairing, improving overall loop performance.</li>
+            <li>Updated wiring diagrams, PLC logic notes, and troubleshooting references as field changes were made, keeping documentation aligned with actual installations.</li>
           </ul>
           <div class="tl-badges">
             <span class="badge b-indigo">Siemens S7-1200</span>
@@ -973,60 +978,12 @@ footer span{color:var(--pink)}
     </div>
     <div class="projects-grid">
 
-      <!-- DeltaBot -->
-      <div class="proj-card reveal rev-up delay-1">
-        <span class="proj-emoji">🤖</span>
-        <div class="proj-name">3-Axis DeltaBot Position Control</div>
-        <div class="proj-date">Mar 2025</div>
-        <div class="proj-desc">7-servo Delta robot with Cartesian/kinematic coordinate systems, spiral Archimedean cam profiles, and PackML-structured Unit/Equipment architecture on a Rockwell ControlLogix 1756-L81E. Implemented MCLM coordinated linear moves, MATC time-driven cam playback, and live accel computation per-step. Tuned jerk from 100% → 50% → 10% to characterize the mechanical-stress vs. cycle-time trade-off.</div>
-        <div class="proj-tags">
-          <span class="p-tag">ControlLogix 1756-L81E</span>
-          <span class="p-tag">Kinetix 5700</span>
-          <span class="p-tag">EtherNet/IP CIP Motion</span>
-          <span class="p-tag">Studio 5000</span>
-          <span class="p-tag">PackML</span>
-          <span class="p-tag">Structured Text</span>
-        </div>
-      </div>
-
-      <!-- Gantry -->
-      <div class="proj-card reveal rev-up delay-2">
-        <span class="proj-emoji">⚙️</span>
-        <div class="proj-name">Gantry Safety &amp; Motion Control System</div>
-        <div class="proj-date">Feb 2025</div>
-        <div class="proj-desc">Two-axis industrial gantry with SIL-rated safety architecture on both Rockwell (Compact GuardLogix 5370 + Kinetix 350) and Siemens (TIA Portal V19 + STEP 7 Safety Advanced) platforms. Implemented dual-channel E-stop, light curtain, Safe Torque Off with 500 ms controlled off-delay, and ISA-TR88 PackML state machine. Achieved full ISO 13849 compliance with zero unplanned safety trips during validation.</div>
-        <div class="proj-tags">
-          <span class="p-tag">GuardLogix 5370</span>
-          <span class="p-tag">Kinetix 350</span>
-          <span class="p-tag">STEP 7 Safety V19</span>
-          <span class="p-tag">Safe Torque Off</span>
-          <span class="p-tag">ISO 13849</span>
-          <span class="p-tag">PackML</span>
-        </div>
-      </div>
-
-      <!-- Rotary Knife -->
-      <div class="proj-card reveal rev-up delay-3">
-        <span class="proj-emoji">🔪</span>
-        <div class="proj-name">PLC-Based Rotary Knife Control System</div>
-        <div class="proj-date">Mar 2025</div>
-        <div class="proj-desc">High-precision rotary knife system using Siemens S7-1500 and SINAMICS S120 drives over PROFINET motion control. Programmed in Ladder Logic and Structured Text to optimize blade synchronization and cut efficiency. Tuned servo parameters and motion profiles to minimize positional error, achieving consistent blade-to-material synchronization across variable production speeds.</div>
-        <div class="proj-tags">
-          <span class="p-tag">Siemens S7-1500</span>
-          <span class="p-tag">SINAMICS S120</span>
-          <span class="p-tag">PROFINET</span>
-          <span class="p-tag">Ladder Logic</span>
-          <span class="p-tag">Structured Text</span>
-          <span class="p-tag">Servo Tuning</span>
-        </div>
-      </div>
-
-      <!-- Truck Powder Unload -->
+      <!-- Truck Powder Unload — most recent -->
       <div class="proj-card reveal rev-up delay-1">
         <span class="proj-emoji">🏭</span>
         <div class="proj-name">Truck Powder Ingredient Unload Station</div>
         <div class="proj-date">Nov 2025</div>
-        <div class="proj-desc">Complete unit-level control system for pneumatic powder transfer on a CompactLogix 5069-L306ER. Designed 5 sequences (Transfer, Hold, FilterClean, Shutdown, E-Shutdown) with AOI-based device layer for 9 motorized valves, blower, and rotary airlock. Built FactoryTalk View ME HMI with P&amp;ID overview, sequence start pop-ups, and operator selection screens. Implemented MSG-based inter-processor tank interlock with a parallel Rail Powder unit.</div>
+        <div class="proj-desc">Complete unit-level control system for pneumatic powder transfer on a CompactLogix 5069-L306ER. Authored 5 PackML sequences (Transfer, Hold, FilterClean, Shutdown, E-Shutdown) with AOI-based device layer for 9 motorized valves, blower, and rotary airlock. Built FactoryTalk View ME HMI with P&amp;ID overview and MSG-based inter-processor destination-tank interlock with a parallel Rail Powder unit.</div>
         <div class="proj-tags">
           <span class="p-tag">CompactLogix L306ER</span>
           <span class="p-tag">Studio 5000</span>
@@ -1037,12 +994,42 @@ footer span{color:var(--pink)}
         </div>
       </div>
 
-      <!-- Simple Motion Control -->
+      <!-- Beckhoff -->
       <div class="proj-card reveal rev-up delay-2">
+        <span class="proj-emoji">📦</span>
+        <div class="proj-name">Beckhoff Cereal Box Filler Control System</div>
+        <div class="proj-date">Oct 2025</div>
+        <div class="proj-desc">Sequential process-control application on Beckhoff CX5140 (TwinCAT 3, IEC 61131-3 LD). Five-step filling sequence with dual TON dwells, single RUN-latch pause/resume preserving step state, and reset-while-stopped logic. Full ADS routing, EtherCAT terminal scanning, and input forcing for online verification on bench hardware.</div>
+        <div class="proj-tags">
+          <span class="p-tag">Beckhoff CX5140</span>
+          <span class="p-tag">TwinCAT 3</span>
+          <span class="p-tag">IEC 61131-3 LD</span>
+          <span class="p-tag">EtherCAT</span>
+          <span class="p-tag">TON Sequencer</span>
+        </div>
+      </div>
+
+      <!-- Point IO -->
+      <div class="proj-card reveal rev-up delay-3">
+        <span class="proj-emoji">💡</span>
+        <div class="proj-name">Ethernet/IP Point I/O Stack-Light Sequencer</div>
+        <div class="proj-date">Sep 2025</div>
+        <div class="proj-desc">Configured full EtherNet/IP distributed-I/O subnet in Studio 5000: 1756-L71 ControlLogix + 1756-EN2TR scanner + 1734-AENT/B Point I/O adapter with IB8/C input and OB8/C relay output modules at 20 ms RPI. Programmed cyclic 4-color stack-light sequencer using OTL/OTU state latching, TON timers, and seal-in pause/resume.</div>
+        <div class="proj-tags">
+          <span class="p-tag">ControlLogix 1756-L71</span>
+          <span class="p-tag">1734-AENT Point I/O</span>
+          <span class="p-tag">EtherNet/IP</span>
+          <span class="p-tag">Studio 5000</span>
+          <span class="p-tag">Ladder Logic</span>
+        </div>
+      </div>
+
+      <!-- Simple Motion Control -->
+      <div class="proj-card reveal rev-up delay-1">
         <span class="proj-emoji">⚡</span>
         <div class="proj-name">Simple Motion Control — Dual Platform</div>
-        <div class="proj-date">Graduate Lab</div>
-        <div class="proj-desc">Same single-axis PackML motion application implemented on two industrial ecosystems: Rockwell 1756-L71 / Kinetix 5300 (100 mm linear move, Ethernet/IP) and Siemens S7-1500 / SINAMICS S120 (1000° rotary move, PROFINET IRT). Full autotune + manual tuning workflow with position-error / velocity-error trends. Cross-platform comparison of MAM vs. MC_MoveRelative, OTL/OTU vs. S/R coils, and S-curve vs. trapezoidal profiles.</div>
+        <div class="proj-date">Apr 2025</div>
+        <div class="proj-desc">Identical single-axis PackML motion application on Rockwell (Kinetix 5300, MAM, EtherNet/IP) and Siemens (SINAMICS S120, MC_MoveRelative, PROFINET IRT). Full autotune + manual loop tuning with S-curve vs. trapezoidal comparison on both platforms — cross-platform benchmark of MAM vs. MC_MoveRelative and OTL/OTU vs. S/R coils.</div>
         <div class="proj-tags">
           <span class="p-tag">ControlLogix 1756-L71</span>
           <span class="p-tag">Kinetix 5300</span>
@@ -1053,33 +1040,51 @@ footer span{color:var(--pink)}
         </div>
       </div>
 
-      <!-- Point IO -->
-      <div class="proj-card reveal rev-up delay-3">
-        <span class="proj-emoji">💡</span>
-        <div class="proj-name">Ethernet/IP Point I/O Stack-Light Sequencer</div>
-        <div class="proj-date">Graduate Lab</div>
-        <div class="proj-desc">Configured full Ethernet/IP distributed-I/O subnet in Studio 5000: 1756-L71 ControlLogix + 1756-EN2TR scanner + 1734-AENT/B Point I/O adapter (3-slot chassis) with IB8/C input and OB8/C relay output modules at 20 ms RPI. Six-rung ladder sequencer (Blue→Green→Yellow→Red) using OTL/OTU state latching, TON dwell timers, and pause/resume via seal-in Run latch with clean first-scan initialization.</div>
+      <!-- DeltaBot -->
+      <div class="proj-card reveal rev-up delay-2">
+        <span class="proj-emoji">🤖</span>
+        <div class="proj-name">3-Axis DeltaBot Position Control</div>
+        <div class="proj-date">Mar 2025</div>
+        <div class="proj-desc">Delta robot with Cartesian/joint coordinate systems, MCLM coordinated moves, and MATC time-driven spiral cam profiles within a PackML architecture on ControlLogix 1756-L81E. Tuned jerk from 100% → 50% → 10% to optimize mechanical stress vs. cycle-time trade-off across live acceleration computation per step.</div>
         <div class="proj-tags">
-          <span class="p-tag">ControlLogix 1756-L71</span>
-          <span class="p-tag">1734-AENT Point I/O</span>
-          <span class="p-tag">EtherNet/IP</span>
+          <span class="p-tag">ControlLogix 1756-L81E</span>
+          <span class="p-tag">Kinetix 5700</span>
+          <span class="p-tag">EtherNet/IP CIP Motion</span>
           <span class="p-tag">Studio 5000</span>
-          <span class="p-tag">Ladder Logic</span>
+          <span class="p-tag">PackML</span>
+          <span class="p-tag">Structured Text</span>
         </div>
       </div>
 
-      <!-- Beckhoff -->
-      <div class="proj-card reveal rev-up delay-2">
-        <span class="proj-emoji">📦</span>
-        <div class="proj-name">Beckhoff Cereal Box Filler Control System</div>
-        <div class="proj-date">Graduate Lab</div>
-        <div class="proj-desc">Sequential process-control application on Beckhoff CX5140 (TwinCAT 3, IEC 61131-3 LD). Five-step cereal filling sequence: conveyor advance → 2 s dwell → fill solenoid → weight sensor confirm → 3 s settling dwell, with pause/resume (single RUN latch preserves step state) and reset-while-stopped logic. Full ADS routing, EtherCAT terminal scanning, and input forcing for online verification on bench hardware.</div>
+      <!-- Rotary Knife -->
+      <div class="proj-card reveal rev-up delay-3">
+        <span class="proj-emoji">🔪</span>
+        <div class="proj-name">PLC-Based Rotary Knife Control System</div>
+        <div class="proj-date">Mar 2025</div>
+        <div class="proj-desc">High-precision rotary knife system using Siemens S7-1500 and SINAMICS S120 over PROFINET. Engineered blade synchronization in Ladder Logic and Structured Text; tuned servo parameters and motion profiles for consistent blade-to-material synchronization across variable production speeds.</div>
         <div class="proj-tags">
-          <span class="p-tag">Beckhoff CX5140</span>
-          <span class="p-tag">TwinCAT 3</span>
-          <span class="p-tag">IEC 61131-3 LD</span>
-          <span class="p-tag">EtherCAT</span>
-          <span class="p-tag">TON Sequencer</span>
+          <span class="p-tag">Siemens S7-1500</span>
+          <span class="p-tag">SINAMICS S120</span>
+          <span class="p-tag">PROFINET</span>
+          <span class="p-tag">Ladder Logic</span>
+          <span class="p-tag">Structured Text</span>
+          <span class="p-tag">Servo Tuning</span>
+        </div>
+      </div>
+
+      <!-- Gantry -->
+      <div class="proj-card reveal rev-up delay-1">
+        <span class="proj-emoji">⚙️</span>
+        <div class="proj-name">Gantry Safety &amp; Motion Control System</div>
+        <div class="proj-date">Feb 2025</div>
+        <div class="proj-desc">Dual-axis gantry on Rockwell (Compact GuardLogix 5370 + Kinetix 350) and Siemens (TIA Portal V19 + STEP 7 Safety Advanced) platforms with PackML state machine and MAM S-curve profiling. SIL-rated dual-channel E-stop, light curtain, and Safe Torque Off — full ISO 13849 compliance with zero unplanned safety trips during validation.</div>
+        <div class="proj-tags">
+          <span class="p-tag">GuardLogix 5370</span>
+          <span class="p-tag">Kinetix 350</span>
+          <span class="p-tag">STEP 7 Safety V19</span>
+          <span class="p-tag">Safe Torque Off</span>
+          <span class="p-tag">ISO 13849</span>
+          <span class="p-tag">PackML</span>
         </div>
       </div>
 
